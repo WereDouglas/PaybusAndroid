@@ -28,7 +28,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     Button btnPay,btnScan;
-    static TextView logoutLink = null;
+    static TextView logoutLink,username,companyname = null;
     File file;
     private ImageView ivImage,UsrImage;
     Context context = this;
@@ -42,8 +42,12 @@ public class MainActivity extends AppCompatActivity {
         btnScan = (Button) findViewById(R.id.buttonScan);
         ivImage = (ImageView) findViewById(R.id.ivImage);
         UsrImage = (ImageView) findViewById(R.id.UsrImage);
+        username = (TextView) findViewById(R.id.username);
+        companyname = (TextView) findViewById(R.id.companyname);
         String root = getApplicationContext().getFilesDir().toString();
         Log.i(TAG,  util.COMPANY_LOGO);
+        username.setText(util.USER_NAME);
+        companyname.setText(util.COMPANY);
         try{
             imageName =   util.COMPANY_LOGO;
             String ul = util.FileUrl+"uploads/"+ util.COMPANY_LOGO;
@@ -52,9 +56,10 @@ public class MainActivity extends AppCompatActivity {
             if(imgFile.exists()){
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 ivImage.setImageBitmap(myBitmap);
+
             }
             else{
-                Picasso.with(context).load(util.FileUrl+"uploads/"+util.COMPANY_LOGO).resize(50, 50)
+                Picasso.with(context).load(util.FileUrl+"uploads/"+util.COMPANY_LOGO).resize(80, 80)
                         .centerCrop().into( ivImage);
                 new DownloadLogo().execute((util.FileUrl + "uploads/" + util.COMPANY_LOGO).trim());
             }
@@ -69,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
             File imgFile2 = new File(root + "/"+ util.USER_IMAGE);
             if(imgFile2.exists()){
                 Bitmap myBitmap2 = BitmapFactory.decodeFile(imgFile2.getAbsolutePath());
-                UsrImage.setImageBitmap(myBitmap2);
+               // myBitmap2.setWidth(40);
+               // myBitmap2.setHeight(40);
+               UsrImage.setImageBitmap(myBitmap2);
+
             }
             else{
                 Picasso.with(context).load(util.FileUrl+"uploads/"+util.USER_IMAGE).resize(50, 50)

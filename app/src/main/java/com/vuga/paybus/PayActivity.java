@@ -156,15 +156,21 @@ public class PayActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (cd.isConnectingToInternet()) {
-                    Register();
-                    try {
-                        findBT();
-                        openBT();
-                    } catch (IOException ex) {
-                    }
-                    try {
-                        sendData();
-                    } catch (IOException ex) {
+                    if (txtcontact.length() < 2 ) {
+                        txtcontact.setError(" Please input valid contact ");
+                        txtcontact.requestFocus();
+                    } else {
+
+                        Register();
+                        try {
+                            findBT();
+                            openBT();
+                        } catch (IOException ex) {
+                        }
+                        try {
+                            sendData();
+                        } catch (IOException ex) {
+                        }
                     }
                     //}
                 } else {

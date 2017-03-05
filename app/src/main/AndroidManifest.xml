@@ -38,7 +38,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PayActivity" />
+        <activity android:name=".PayActivity"  android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ScanActivity"
             android:label="@string/title_activity_scan"

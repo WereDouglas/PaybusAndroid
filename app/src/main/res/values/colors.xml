@@ -6,4 +6,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorBar">#7F3E98</color>
     <color name="spinner">#81A8D5</color>
+    <color name="gray">#D4D4D4</color>
+    <color name="blue">#316AC4</color>
+    <color name="button_background">#2D9FFF</color>
+    <color name="gold"> #FFE791</color>
 </resources>

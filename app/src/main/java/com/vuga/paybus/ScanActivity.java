@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +31,15 @@ public class ScanActivity extends AppCompatActivity {
     private ConnectionDetector cd;
     private String barcode;
     private boolean canEnter;
+    private Button  btnSubmit;
+    EditText scanText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         cd = new ConnectionDetector(ScanActivity.this);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
 
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.PRODUCT_CODE_TYPES);
@@ -45,6 +50,23 @@ public class ScanActivity extends AppCompatActivity {
 //
 
         label = (TextView) findViewById(R.id.label);
+        scanText = (EditText) findViewById(R.id.input_scan);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (cd.isConnectingToInternet()) {
+                    barcode = scanText.getText()+"";
+                    if (barcode.length() < 7 || barcode.length() > 14) {
+
+                        scanText.setError(" Value should be between at least 7 characters but less than 14 characters ");
+                        scanText.requestFocus();
+                    } else {
+
+                        Register();
+                    }
+
+             }
+            }
+        });
     }
 
     // Get the results:
@@ -57,8 +79,16 @@ public class ScanActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 barcode = result.getContents();
+               scanText.setText(result.getContents());
                 if (cd.isConnectingToInternet()) {
-                    Register();
+                    if (barcode.length() < 7 || barcode.length() > 14) {
+
+                        scanText.setError(" Value should be between at least 7 characters but less than 14 characters ");
+                        scanText.requestFocus();
+                    } else {
+
+                        Register();
+                    }
                 } else {
                     Toast.makeText(ScanActivity.this, "No Internet Connection !", Toast.LENGTH_LONG).show();
                 }
@@ -74,7 +104,7 @@ public class ScanActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(ScanActivity.this,
                 R.style.AppTheme);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Submitting information...");
+        progressDialog.setMessage("Checking.......");
         progressDialog.show();
 
 
@@ -94,10 +124,11 @@ public class ScanActivity extends AppCompatActivity {
                     if (j.get("status").toString().equals("true")) {
                         progressDialog.cancel();
                         String contents = "NAME:"+j.get("name").toString()+ "\n";
-                        contents += "CONTACT:"+j.get("contact").toString()+ "\n";
-                        contents += "BUS:"+j.get("bus").toString()+ "\n";
-                        contents += "SEAT:"+j.get("seat").toString()+ "\n";
-                        contents += barcode;
+                        contents += "DATE :"+j.get("date").toString()+ "\n";
+                        contents += "CONTACT :"+j.get("contact").toString()+ "\n";
+                        contents += "BUS :"+j.get("bus").toString()+ "\n";
+                        contents += "SEAT :"+j.get("seat").toString()+ "\n";
+                        contents += "BAR CODE NUMBER :"+j.get("code").toString()+ "\n";
                         label.setText(contents);
 
                     } else {
