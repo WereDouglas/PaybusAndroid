@@ -18,8 +18,8 @@ public class Route
     private int id;
 
     private String distance;
-
     private String start;
+    private String seat;
 
 
     public String getStart_time() {
@@ -98,5 +98,13 @@ public class Route
     public String toString()
     {
         return "ClassPojo [stop = "+stop+", distance = "+distance+", start = "+start+", name = "+name+", cost = "+cost+"]";
+    }
+
+    public String getSeat() {
+        return seat;
+    }
+
+    public void setSeat(String seat) {
+        this.seat = seat;
     }
 }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layout_margin="10dp"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/button_margin"
+        android:orientation="horizontal" >
+        <ImageView
+
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:paddingLeft="4dip"
+            android:paddingRight="4dip"
+            android:src="@drawable/session" />
+        <TextView
+            android:id="@+id/sessionID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATE" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginLeft="30dp"
+        android:orientation="horizontal" >
+        <TextView
+            android:id="@+id/bus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BUS" />
+        <TextView
+            android:id="@+id/route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ROUTE" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray"
+        android:layout_marginLeft="30dp"
+        android:orientation="horizontal" >
+        <TextView
+            android:id="@+id/seats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/header_text_size"
+            android:text="MX.SEATS" />
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/header_text_size"
+            android:text="STATUS" />
+        <TextView
+            android:id="@+id/sync"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:textSize="@dimen/header_text_size"
+            android:layout_height="wrap_content"
+            android:text="SYNCED" />
+        <TextView
+            android:id="@+id/cost"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/header_text_size"
+            android:textColor="@color/background"
+            android:layout_height="wrap_content"
+            android:text="COST" />
+
+    </LinearLayout>
+
+</LinearLayout>

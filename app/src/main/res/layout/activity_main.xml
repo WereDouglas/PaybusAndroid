@@ -10,8 +10,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.vuga.paybus.MainActivity">
-
-
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
@@ -27,7 +25,7 @@
             <ImageView android:src="@drawable/ic_launcher"
                 android:layout_height="72dp"
                 android:layout_width="150dp"
-                android:layout_marginBottom="7dp"
+                android:layout_marginBottom="5dp"
                 android:layout_gravity="center_horizontal" />
             <TextView
                 android:id="@+id/companyname"
@@ -45,7 +43,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:weightSum="4"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal">
             <ImageView
@@ -81,30 +79,58 @@
                 android:textStyle="bold"
                 android:text="PAY BUS" />
 
-
         </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="4"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="2dp"
                 android:layout_gravity="right"
                 android:orientation="vertical">
-
-                <Button
-                    android:layout_width="@dimen/button_width"
-                    android:layout_height="@dimen/button_height"
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="right"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/rectangle"
+                        android:drawableTop="@drawable/bus"
+                        android:padding="@dimen/button_padding"
+                        android:layout_margin="@dimen/button_margin"
+                        android:text="Pay"
+                        android:elevation="20dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/buttonPay"
+                        android:textSize="@dimen/button_text_size"
+                        android:layout_weight="1"
+                        android:textColor="@color/white" />
+                    <Button
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
                     android:background="@drawable/rectangle"
                     android:drawableTop="@drawable/bus"
                     android:padding="@dimen/button_padding"
                     android:layout_margin="@dimen/button_margin"
-                    android:text="Pay"
+                    android:text="View payments"
                     android:elevation="20dp"
                     android:layout_gravity="center"
-                    android:id="@+id/buttonPay"
+                    android:id="@+id/buttonSession"
                     android:textSize="@dimen/button_text_size"
                     android:layout_weight="1"
                     android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="right"
+                    android:orientation="horizontal">
                 <Button
                     android:layout_width="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
@@ -115,10 +141,34 @@
                     android:text="scan"
                     android:elevation="20dp"
                     android:layout_gravity="center"
-                    android:id="@+id/buttonScan"
                     android:layout_weight="1"
+                    android:id="@+id/buttonScan"
+
                     android:textSize="@dimen/button_text_size"
                     android:textColor="@color/white"/>
+                    <Button
+                        android:layout_width="@dimen/button_width"
+                        android:layout_height="@dimen/button_height"
+                        android:background="@drawable/rectangle"
+                        android:drawableTop="@drawable/scan"
+                        android:padding="@dimen/button_padding"
+                        android:layout_margin="@dimen/button_margin"
+                        android:text="Expense"
+                        android:elevation="20dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:id="@+id/buttonExp"
+                        android:textSize="@dimen/button_text_size"
+                        android:textColor="@color/white"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="right"
+                    android:orientation="horizontal">
                 <Button
                     android:layout_width="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
@@ -126,7 +176,7 @@
                     android:drawableTop="@drawable/logout"
                     android:padding="@dimen/button_padding"
                     android:layout_margin="@dimen/button_margin"
-                    android:text="Logout"
+                    android:text="Close session"
                     android:elevation="20dp"
                     android:layout_gravity="center"
                     android:id="@+id/link_logout"
@@ -147,6 +197,7 @@
                     android:id="@+id/help"
                     android:layout_weight="1"
                     android:textColor="@color/white" />
+                    </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

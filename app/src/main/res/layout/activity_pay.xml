@@ -22,25 +22,23 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:padding="@dimen/button_margin"
-            android:background="@drawable/boundary"
+
             android:orientation="horizontal">
             <ImageView android:src="@drawable/ic_launcher"
-                android:layout_width="80dp"
+                android:layout_width="30dp"
                 android:id="@+id/logo"
-                android:layout_height="60dp"
+                android:layout_height="30dp"
                 android:layout_marginBottom="1dp"
                 android:layout_gravity="left" />
             <ImageView
                 android:id="@+id/ivImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="right"
-                android:layout_marginLeft="120dp"
+                android:layout_marginLeft="50dp"
                 />
 
         </LinearLayout>
-
-
             <TextView
                 android:id="@+id/info"
                 android:layout_width="wrap_content"
@@ -60,66 +58,100 @@
             <TextView
                 android:id="@+id/date"
                 android:layout_width="fill_parent"
-                android:layout_weight="1"
+
                 android:textSize="20dp"
                 android:layout_height="wrap_content"
                 android:text="Date"/>
-
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="20dp"
-                    android:layout_height="wrap_content"
-                    android:text="Please select the route"/>
-                <Spinner
-                    android:id="@+id/input_route"
-                    android:layout_weight="1"
-                    android:textSize="20dp"
-                    style="@style/spinner_style"
-                    android:popupBackground="#cccccc"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    />
-            <TextView
-                android:id="@+id/rank"
                 android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20dp"
                 android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:layout_below="@+id/my_spinner" />
-
-            <TextView
-                android:id="@+id/country"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:layout_below="@+id/rank" />
-            <TextView
-                android:id="@+id/ids"
-                android:visibility="gone"
-                android:textSize="10dp"
-                android:layout_width="wrap_content"
+                android:text="Please select the route"/>
+            <Spinner
+                android:id="@+id/input_route"
+                android:layout_weight="1"
+                android:textSize="20dp"
+                style="@style/spinner_style"
+                android:popupBackground="#cccccc"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 />
-
             <TextView
-                android:id="@+id/population"
-                android:layout_width="wrap_content"
+
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:layout_below="@+id/country" />
+                android:text="Transport cost:" />
+            <EditText
+                android:id="@+id/cost"
+                android:layout_height="@dimen/txt_height"
+                android:layout_width="match_parent"
+                android:inputType="number"
+                android:hint="Cost"
+                android:text="0"
+                android:layout_marginBottom="8dp"
+                android:padding="@dimen/button_padding"
+                android:background="@drawable/btn_circle"
+                />
+            <TextView
+
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Luggage cost:" />
+            <EditText
+                android:id="@+id/luggage"
+                android:layout_height="@dimen/txt_height"
+                android:layout_width="match_parent"
+                android:inputType="number"
+                android:layout_marginBottom="8dp"
+                android:hint="Cost Of Luggage"
+                android:text="0"
+                android:padding="@dimen/button_padding"
+                android:background="@drawable/btn_circle"
+                />
+            <EditText
+                android:id="@+id/total"
+                android:layout_height="@dimen/txt_height"
+                android:layout_width="match_parent"
+                android:inputType="number"
+                android:layout_marginBottom="8dp"
+                android:hint="Total"
+                android:padding="@dimen/button_padding"
+                android:background="@drawable/btn_circle"
+                />
+
             <EditText android:id="@+id/input_contact"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:background="@drawable/btn_circle"
+                android:layout_height="@dimen/txt_height"
+                android:padding="@dimen/button_padding"
                 android:inputType="number"
-                android:textSize="20dp"
+                android:textSize="18dp"
+                android:layout_marginBottom="8dp"
                 android:hint="Passenger contact" />
             <EditText android:id="@+id/input_name"
+                android:layout_height="@dimen/txt_height"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:padding="@dimen/button_padding"
+                android:background="@drawable/btn_circle"
                 android:inputType="textCapWords"
+                android:layout_marginBottom="8dp"
                 android:hint="Passenger name" />
+            <EditText
+                android:id="@+id/seatNo"
+                android:layout_height="@dimen/txt_height"
+                android:layout_width="match_parent"
+                android:inputType="number"
+                android:layout_marginBottom="8dp"
+                android:hint="Seat number"
+                android:padding="@dimen/button_padding"
+                android:background="@drawable/btn_circle"
+                />
+
+
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -135,6 +167,11 @@
                     android:textColor="@color/white"
                     android:layout_margin="5dp"
                     android:text="Submit" />
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Info:" />
 
             </LinearLayout>
             <TextView

@@ -46,14 +46,17 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:padding="@dimen/button_padding"
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
                     android:id="@+id/contact"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/txt_height"
+                    android:padding="@dimen/button_padding"
                     android:hint="Contact/Phone number"
                     android:inputType="number"
+                    android:background="@drawable/btn_circle"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -61,18 +64,21 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:padding="@dimen/button_padding"
                 android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/txt_height"
+                    android:padding="@dimen/button_padding"
                     android:hint="Password"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
+                    android:background="@drawable/btn_circle"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
@@ -81,8 +87,9 @@
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/button_height"
                 android:layout_marginTop="16dp"
+                android:background="@color/colorPrimaryDark"
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 

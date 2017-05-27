@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.journeyapps.barcodescanner.Util;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -45,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,17 +54,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 public class PayActivity extends AppCompatActivity {
-    private TextView mDateDisplay, txtcost, txtstart, txtstop, txtID, txtname, txtcontact, t;
+    private TextView mDateDisplay, txtcost, txttotal, txtstop, txtID, txtname, txtcontact, t, txtstatus, txtNo, txtlagguage;
     private Button mPickDate, btnSubmit;
     private ImageView bar, logo;
     private int mYear;
     private int mMonth;
     private int mDay;
-    String barcode;
+    String barcode, seatNo;
+    private String thisday;
     static final int DATE_DIALOG_ID = 0;
     JSONObject jsonobject;
     JSONArray jsonarray;
@@ -71,6 +75,13 @@ public class PayActivity extends AppCompatActivity {
     ArrayList<Route> world;
     private ConnectionDetector cd;
     boolean canEnter = false;
+    ArrayList<Payment> paymentList;
+    PaymentAdapter adapter;
+    static String routeFile = "route.json";
+    ArrayList<String> routeList;
+    ArrayList<Route> route;
+    File fileRoute;
+
 
     // android built in classes for bluetooth operations
     BluetoothAdapter mBluetoothAdapter;
@@ -92,17 +103,54 @@ public class PayActivity extends AppCompatActivity {
 
     // will enable user to enter any text to be printed
     EditText myTextbox;
-
+    List<String> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
         cd = new ConnectionDetector(PayActivity.this);
-        txtcost = (TextView) findViewById(R.id.rank);
-        txtstart = (TextView) findViewById(R.id.country);
-        txtstop = (TextView) findViewById(R.id.population);
-        txtID = (TextView) findViewById(R.id.ids);
+        txtcost = (TextView) findViewById(R.id.cost);
+        txttotal = (TextView) findViewById(R.id.total);
+        txtstatus = (TextView) findViewById(R.id.status);
+
+        txtNo = (TextView) findViewById(R.id.seatNo);
+        txtlagguage = (TextView) findViewById(R.id.luggage);
+        txtlagguage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                txttotal.setText((Double.parseDouble(txtcost.getText() + "") + Double.parseDouble(txtlagguage.getText() + "")) + "");
+            }
+        });
+        fileRoute = new File(PayActivity.this.getFilesDir().getPath() + "/" + routeFile);
+        if (fileRoute.exists()) {
+            try {
+                LoadRoute();
+            } catch (Exception ex) {
+
+            }
+        } else {
+            Toast.makeText(PayActivity.this, "No Route list !", Toast.LENGTH_LONG).show();
+        }
+        /***ROUTE MANAGEMENT**/
+        Spinner myRoute = (Spinner) findViewById(R.id.input_route);
+        // Spinner adapter
+        myRoute.setAdapter(new ArrayAdapter<String>(PayActivity.this,
+                android.R.layout.simple_spinner_dropdown_item, routeList));
+        // Spinner on item click listener
+        myRoute.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                txtcost.setText(route.get(position).getCost());
+                //  txtID.setText(route.get(position).getId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
         txtname = (TextView) findViewById(R.id.input_name);
         txtcontact = (TextView) findViewById(R.id.input_contact);
         t = (TextView) findViewById(R.id.barCode);
@@ -117,7 +165,7 @@ public class PayActivity extends AppCompatActivity {
         // barcode="9310779300005";
         EAN13 code = new EAN13(barcode);
         Toast.makeText(PayActivity.this, barcode + "", Toast.LENGTH_LONG).show();
-       // Bitmap bitmap = code.getBitmap(3400, 1400);
+        // Bitmap bitmap = code.getBitmap(3400, 1400);
         Bitmap bitmap = code.getBitmap(3500, 1400);
         // bar.setScaleType(ImageView.ScaleType.FIT_XY);
         bar.setImageBitmap(bitmap);
@@ -127,22 +175,21 @@ public class PayActivity extends AppCompatActivity {
         myLabel = (TextView) findViewById(R.id.label);
 
 
-        new DownloadJSON().execute();
         mDateDisplay = (TextView) findViewById(R.id.date);
         mPickDate = (Button) findViewById(R.id.datepicker);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         String root = getApplicationContext().getFilesDir().toString();
-        try{
+        try {
 
-            String ul = util.FileUrl+"uploads/"+ util.COMPANY_LOGO;
+            String ul = util.FileUrl + "uploads/" + util.COMPANY_LOGO;
 
-            File imgFile = new File(root + "/"+ util.COMPANY_LOGO);
-            if(imgFile.exists()){
+            File imgFile = new File(root + "/" + util.COMPANY_LOGO);
+            if (imgFile.exists()) {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 ivImage.setImageBitmap(myBitmap);
             }
 
-        }catch(Exception e) {
+        } catch (Exception e) {
             //  Toast.makeText(getApplicationContext(), ""+e, Toast.LENGTH_LONG).show();
 
         }
@@ -155,13 +202,24 @@ public class PayActivity extends AppCompatActivity {
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (cd.isConnectingToInternet()) {
-                    if (txtcontact.length() < 2 ) {
-                        txtcontact.setError(" Please input valid contact ");
-                        txtcontact.requestFocus();
-                    } else {
+                try {
+                    if (Integer.parseInt(txtNo.getText().toString()) > Integer.parseInt(util.MAX_SEATS)) {
+                        txtNo.setError("Invalid seat number ,Value greater than allocated seat count ");
+                        txtNo.requestFocus();
+                        return;
+                    }
+                } catch (Exception p) {
+                    txtNo.setError("Invalid seat number ,Value greater than allocated seat count ");
+                    txtNo.requestFocus();
+                    return;
+                }
+                if (exist(list, txtNo.getText().toString())) {
+                    txtNo.setError(" SEAT OCCUPIED ");
+                    txtNo.requestFocus();
+                    return;
+                } else {
 
-                        Register();
+                    if (Save()) {
                         try {
                             findBT();
                             openBT();
@@ -171,10 +229,15 @@ public class PayActivity extends AppCompatActivity {
                             sendData();
                         } catch (IOException ex) {
                         }
+                        Intent startLocation = new Intent(PayActivity.this, MainActivity.class);
+                        startActivity(startLocation);
+                        finish();
                     }
-                    //}
-                } else {
-                    Toast.makeText(PayActivity.this, "No Internet Connection !", Toast.LENGTH_LONG).show();
+                       /* Log.d("INTERNET",util.isInternetAvailable()+"" );
+                        Register();
+                        */
+
+
                 }
             }
         });
@@ -218,9 +281,91 @@ public class PayActivity extends AppCompatActivity {
         mDateDisplay.setText(
                 new StringBuilder()
                         // Month is 0 based so add 1
-                        .append(today.monthDay-1).append("-")
+                        .append(today.monthDay).append("-")
                         .append(today.month + 1).append("-")
                         .append(today.year).append(""));
+        thisday = (today.monthDay) + "-" + (today.month + 1) + "-" + today.year + "";
+        //    new DownloadJSON().execute();
+        txtcost.setText(util.SESSION_COST);
+        list = new ArrayList<String>();
+        Status();
+
+    }
+
+    private void LoadRoute() {
+
+        route = new ArrayList<Route>();
+        routeList = new ArrayList<String>();
+
+        String json = getData(routeFile);
+        try {
+            JSONObject jsonRootObject = new JSONObject(json.substring(json.indexOf("{"), json.lastIndexOf("}") + 1));
+
+            JSONArray jsonArray = jsonRootObject.optJSONArray("routes");
+            //Iterate the jsonArray and print the info of JSONObjects
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Route v = new Route();
+
+                v.setName(jsonObject.optString("name").toString());
+                // String[] startArray = jsonObject.optString("start").toString().split("T");
+                v.setCost(jsonObject.optString("cost").toString());
+                // String[] endArray = jsonObject.optString("end").toString().split("T");
+                v.setStart_time(jsonObject.optString("start").toString());
+                v.setEnd_time(jsonObject.optString("end").toString());
+                route.add(v);
+                routeList.add(jsonObject.optString("name") + "");
+                //   Toast.makeText(NewActivity.this, "Looping "+ jsonObject.optString("noPlate"), Toast.LENGTH_LONG).show();
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            System.out.print("data sync Error" + e);
+            e.printStackTrace();
+        }
+    }
+
+    public String getData(String fileName) {
+        try {
+            File f = new File(PayActivity.this.getFilesDir().getPath() + "/" + fileName);
+            //check whether file exists
+            FileInputStream is = new FileInputStream(f);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            return new String(buffer);
+        } catch (IOException e) {
+            Log.e("TAG", "Error in Reading: " + e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    public boolean exist(List<String> e, String term) {
+
+        String search = term;
+        for (String str : e) {
+            if (str.trim().contains(search))
+                return true;
+        }
+        return false;
+
+    }
+
+    private void Status() {
+
+        PaymentHandler databaseHelper = new PaymentHandler(PayActivity.this);
+        paymentList = new ArrayList<Payment>();
+        paymentList = databaseHelper.getWhere(util.SESSION_ID);
+        String values = "";
+        int occupied = paymentList.size();
+        int balance = Integer.parseInt(util.MAX_SEATS) - occupied;
+        values = ("OCCUPIED : " + occupied + " BALANCE SEATS :" + balance + "\n");
+        for (int x = 0; x < paymentList.size(); x++) {
+            System.out.println(paymentList.get(x).getSeat());
+            values = values + (paymentList.get(x).getEmail() + " SEAT" + paymentList.get(x).getSeat() + "\n");
+            list.add(paymentList.get(x).getSeat());
+        }
+        txtstatus.setText(values);
     }
 
     private void updateDate() {
@@ -231,13 +376,17 @@ public class PayActivity extends AppCompatActivity {
                         .append(mDay).append("-")
                         .append(mMonth + 1).append("-")
                         .append(mYear).append(""));
+        thisday = (mDay) + "-" + (mMonth + 1) + "-" + mYear + "";
+        new DownloadJSON().execute();
     }
+
     private static String pad(int c) {
         if (c >= 10)
             return String.valueOf(c);
         else
             return "0" + String.valueOf(c);
     }
+
     //Datepicker dialog generation
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
@@ -250,6 +399,7 @@ public class PayActivity extends AppCompatActivity {
                     updateDate();
                 }
             };
+
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -268,25 +418,25 @@ public class PayActivity extends AppCompatActivity {
             // Create an array to populate the spinner
             worldlist = new ArrayList<String>();
             // JSON file URL address
-            jsonobject = JSONfunctions.getJSONfromURL(util.Url + "route/arraylist");
-            Log.d("url:", util.Url + "route/arraylist");
-
+            jsonobject = JSONfunctions.getJSONfromURL(util.Url + "route/arraylist/" + util.COMPANY_ID + "/" + thisday);
+            Log.d("url:", util.Url + "route/arraylist/" + util.COMPANY_ID + "/" + thisday);
             try {
                 // Locate the NodeList name
                 jsonarray = jsonobject.getJSONArray("routes");
                 for (int i = 0; i < jsonarray.length(); i++) {
                     jsonobject = jsonarray.getJSONObject(i);
                     Route route = new Route();
-                    route.setName(jsonobject.optString("name")+"-"+jsonobject.optString("start_time"));
+                    route.setName(jsonobject.optString("name") + "-" + jsonobject.optString("start_time"));
                     route.setCost(jsonobject.optString("cost"));
-                    route.setStart(jsonobject.optString("start")+"TIME:"+jsonobject.optString("start_time"));
+                    route.setStart(jsonobject.optString("start") + " TIME:" + jsonobject.optString("start_time"));
                     route.setStop(jsonobject.optString("stop"));
+                    route.setSeat(jsonobject.optString("seat"));
                     route.setStart_time(jsonobject.optString("start_time"));
                     route.setEnd_time(jsonobject.optString("end_time"));
                     route.setId(jsonobject.optInt("id"));
                     world.add(route);
                     // Populate spinner with country names
-                    worldlist.add(jsonobject.optString("name")+" TIME:"+jsonobject.optString("start_time"));
+                    worldlist.add(jsonobject.optString("name") + " TIME:" + jsonobject.optString("start_time"));
                     Log.d("Info:", jsonobject.optString("name") + "-" + jsonobject.optString("cost"));
 
                 }
@@ -302,29 +452,14 @@ public class PayActivity extends AppCompatActivity {
             // Locate the spinner in activity_main.xml
             Spinner mySpinner = (Spinner) findViewById(R.id.input_route);
             // Spinner adapter
-            mySpinner.setAdapter(new ArrayAdapter<String>(PayActivity.this,
-                    android.R.layout.simple_spinner_dropdown_item, worldlist));
-            // Spinner on item click listener
-            mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                @Override
-                public void onItemSelected(AdapterView<?> arg0,
-                                           View arg1, int position, long arg3) {
-                    // TODO Auto-generated method stub
-                    // Locate the textviews in activity_main.xml
-                    // Set the text followed by the position
-                    txtcost.setText(world.get(position).getCost());
-                    txtstart.setText("Start: " + world.get(position).getStart());
-                    txtstop.setText("Stop : " + world.get(position).getStop());
-                    txtID.setText(world.get(position).getId() + "");
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
-                    // TODO Auto-generated method stub
-                }
-            });
         }
+    }
+
+    private boolean Save() {
+        PaymentHandler db = new PaymentHandler(this);
+        db.addPayment(new Payment(barcode, mDateDisplay.getText().toString(), txtcontact.getText().toString(), txtcost.getText().toString(), thisday.toString(), txtNo.getText().toString(), txtcontact.getText().toString(), txtname.getText().toString(), "f", util.SESSION_ID, txtlagguage.getText().toString()));
+
+        return true;
     }
 
     private boolean Register() {
@@ -345,7 +480,7 @@ public class PayActivity extends AppCompatActivity {
 
         params.put("cost", txtcost.getText().toString());
         params.put("name", txtname.getText().toString());
-        params.put("seat", "");
+        params.put("seat", txtNo.getText().toString());
         params.put("contact", txtcontact.getText().toString());
         params.put("routeID", txtID.getText());
         params.put("date", mDateDisplay.getText());
@@ -542,8 +677,9 @@ public class PayActivity extends AppCompatActivity {
             String msg = "";
             printTitle("RECEIPT");
             printTitle(util.COMPANY);
-            printPhotoLogo();
             printCompanyLogo();
+            printPhotoLogo();
+
             printPhoto();
             printText(barcode);
             printNewLine();
@@ -551,26 +687,25 @@ public class PayActivity extends AppCompatActivity {
             printNewLine();
             resetPrint();
             msg += "TEL:" + txtcontact.getText().toString() + "\n";
-            msg += "" + txtstart.getText().toString() + "  - " + txtstop.getText() + "\n";
-            msg += "DATE:" + mDateDisplay.getText().toString() +"   SEAT"+ "\n";
-            msg += "P:" + txtcost.getText().toString() +"  D: "+ " "+"\n";
-            msg += "NET:" + txtcost.getText().toString() + "\n";
-            msg += "-----------------------" + "\n";
             msg += "NAME:" + txtname.getText().toString() + "\n";
-            msg += "T.ID:" +barcode+ " No: "+"\n";
+            msg += "BUS :" + util.SESSION_BUS + "\n";
+            msg += "TO: " + util.SESSION_ROUTE + " " + "\n";
+            msg += util.SESSION_TIME + "\n";
+            msg += "COST: " + txtcost.getText() + "\n";
+            msg += "LUGGAGE COST: " + txtlagguage.getText() + "\n";
+            msg += "TOTAL COST: " + txttotal.getText() + "\n";
+            msg += "DATE:" + mDateDisplay.getText().toString() + " SEAT No:" + txtNo.getText() + "\n";
+            msg += "-----------------------" + "\n";
+            msg += "T.ID:" + barcode + " " + "\n";
             msg += "------------------------" + "\n";
             msg += "NO REFUND" + "\n";
             msg += "------------------------" + "\n";
-            msg += "SERVED BY : " + util.USER_NAME+ "\n";
-            msg += " "+ currentDateandTime+" " + "\n";
+            msg += "SERVED BY : " + util.USER_NAME + "\n";
+            msg += " " + currentDateandTime + " " + "\n";
             msg += "POWERED BY PAYBUS" + "\n";
-            msg += "####################" + "\n";
-            msg += " " + txtstart.getText().toString() + "  -  " + txtstop.getText() + "\n";
-            msg += "DATE:" + mDateDisplay.getText().toString() +" SEAT"+ "\n";
-            msg += "P:" + txtcost.getText().toString() +"  D: "+ " "+"\n";
-            msg += "T.ID:" +barcode+ "No: "+"\n";
-            msg += "POWERED BY PAY BUS" + "\n";
-            msg += "------------------"+ "\n";
+            msg += "" + "\n";
+            msg += "" + "\n";
+            msg += "" + "\n";
             msg += "" + "\n";
             mmOutputStream.write(msg.getBytes());
 
@@ -640,6 +775,7 @@ public class PayActivity extends AppCompatActivity {
             Log.e("PrintTools", "the file isn't exists");
         }
     }
+
     public void printPhotoLogo() {
         try {
 

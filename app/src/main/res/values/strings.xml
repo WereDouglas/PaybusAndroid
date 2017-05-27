@@ -15,4 +15,7 @@
     </string>
     <string name="title_activity_main">Pay Bus</string>
     <string name="title_activity_scan">Scanning</string>
+    <string name="title_activity_session">SessionActivity</string>
+    <string name="title_activity_start">StartActivity</string>
+    <string name="title_activity_new">NewActivity</string>
 </resources>

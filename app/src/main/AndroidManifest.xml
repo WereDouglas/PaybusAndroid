@@ -38,11 +38,27 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PayActivity"  android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PayActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ExpenseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ScanActivity"
             android:label="@string/title_activity_scan"
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SessionActivity"
+            android:label="@string/title_activity_session"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".StartActivity"
+            android:label="@string/title_activity_start"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewActivity"
+            android:label="@string/title_activity_new"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

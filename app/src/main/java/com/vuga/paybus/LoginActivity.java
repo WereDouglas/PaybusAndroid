@@ -108,6 +108,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         try {
@@ -127,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
             if (!contact.toString().equals("") && !name.toString().equals("")) {
-                Intent startLocation = new Intent(LoginActivity.this, MainActivity.class);
+                Intent startLocation = new Intent(LoginActivity.this,StartActivity.class);
                 startActivity(startLocation);
                 finish();
             }
@@ -181,16 +183,22 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString("companyID", j.get("companyID").toString());
                         editor.putString("company", j.get("company").toString());
                         editor.putString("logo", j.get("logo").toString());
+                        editor.putString("bus", j.get("bus").toString());
+                        editor.putString("route", j.get("route").toString());
+                        editor.putString("MAX_SEATS", j.get("seats").toString());
                         //
                         editor.apply();
                         editor.commit();
                         util.USER_NAME = myPrefs.getString("name", "").toString();
                         util.COMPANY_ID = myPrefs.getString("companyID", "").toString();
+                        util.BUS = myPrefs.getString("bus", "").toString();
+                        util.ROUTE = myPrefs.getString("route", "").toString();
+                        util.MAX_SEATS = myPrefs.getString("seats", "").toString();
                         try {
 
                             Toast.makeText(getApplicationContext(), j.get("info").toString(), Toast.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), "Your name is :"+j.get("name").toString(), Toast.LENGTH_LONG).show();
-                           Intent startLocation = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent startLocation = new Intent(LoginActivity.this, StartActivity.class);
                             startActivity(startLocation);
                             finish();
                             progressDialog.cancel();
@@ -208,7 +216,6 @@ public class LoginActivity extends AppCompatActivity {
                                 new DownloadImage().execute((util.FileUrl + "uploads/" + j.get("logo").toString()).trim());
                         }catch(Exception e) {
                             //  Toast.makeText(getApplicationContext(), ""+e, Toast.LENGTH_LONG).show();
-
                         }
 
                     } else {
