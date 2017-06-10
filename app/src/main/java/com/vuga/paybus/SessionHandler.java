@@ -37,6 +37,8 @@ public class SessionHandler extends SQLiteOpenHelper {
     private static final String KEY_SEAT = "seat";
     private static final String KEY_NAME = "name";
     private static final String KEY_LUG = "luggage";
+    private static final String KEY_ROUTE_ID = "routeID";
+
 
     // sessions Expense
     /////*******/
@@ -58,7 +60,7 @@ public class SessionHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_SESSIONS_TABLE);
 
         String CREATE_PAYMENTS_TABLE = "CREATE TABLE " + TABLE_PAYMENTS + "("
-                + KEY_BARCODE + " TEXT," + KEY_DATE+ " TEXT,"+ KEY_CONTACT + " TEXT," + KEY_COST+ " TEXT," + KEY_CREATED + " TEXT,"+ KEY_SEAT + " TEXT," + KEY_NAME + " TEXT,"+KEY_SYNC+" TEXT,"+ KEY_SESSION_ID +" TEXT,"+ KEY_LUG +" TEXT"+ ")";
+                + KEY_BARCODE + " TEXT," + KEY_DATE+ " TEXT,"+ KEY_CONTACT + " TEXT," + KEY_COST+ " TEXT," + KEY_CREATED + " TEXT,"+ KEY_SEAT + " TEXT," + KEY_NAME + " TEXT,"+KEY_SYNC+" TEXT,"+ KEY_SESSION_ID +" TEXT,"+ KEY_LUG +" TEXT,"+ KEY_ROUTE_ID + "TEXT,"+ KEY_BUS+"TEXT," +KEY_ROUTE+"TEXT" +")";
         db.execSQL(CREATE_PAYMENTS_TABLE);
 
         String CREATE_EXPENSE_TABLE = "CREATE TABLE " + TABLE_EXPENSE + "("

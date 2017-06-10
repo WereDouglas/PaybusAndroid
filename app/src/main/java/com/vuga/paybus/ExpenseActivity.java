@@ -59,7 +59,7 @@ public class ExpenseActivity extends AppCompatActivity {
         gridView = (ListView) findViewById(R.id.listView1);
         ExpenseHandler databaseHelper = new ExpenseHandler (ExpenseActivity.this);
         expenseList = new ArrayList<Expense>();
-        expenseList = databaseHelper.getWhere(util.SESSION_ID);
+        expenseList = databaseHelper.getWhere();
         // paymentList = databaseHelper.getAllPayments();
         adapter = new ExpenseAdapter(ExpenseActivity.this, expenseList);
         gridView.setAdapter(adapter);
@@ -91,7 +91,7 @@ public class ExpenseActivity extends AppCompatActivity {
         // Locate the Route Class
         final  ExpenseHandler databaseHelper = new ExpenseHandler(ExpenseActivity.this);
         expensesList = new ArrayList<Expense>();
-        expensesList = databaseHelper.Sync(util.SESSION_ID.toString());
+        expensesList = databaseHelper.Sync();
         for (int x = 0; x < expensesList.size(); x++) {
 
             final String particular = expensesList.get(x).getParticular();
@@ -104,7 +104,7 @@ public class ExpenseActivity extends AppCompatActivity {
             parama.put("total", expensesList.get(x).getTotal().toString());
             parama.put("device", "true");
             parama.put("companyID", util.COMPANY_ID.toString());
-            parama.put("sessionID", util.SESSION_ID.toString());
+            parama.put("sessionID", "none");
             parama.put("userID", util.USER_ID.toString());
             client.post(util.Url + "expense/create", parama, new AsyncHttpResponseHandler() {
                 @Override
@@ -114,7 +114,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
                         JSONObject j = new JSONObject(ret);
                         if (j.get("status").toString().equals("true")) {
-                            String ANS =    databaseHelper.updateSync(sessionID,particular);
+                            String ANS =    databaseHelper.updateSync(particular);
                             Toast.makeText(getApplicationContext(), " " + ANS + "", Toast.LENGTH_LONG).show();
 
                         } else {

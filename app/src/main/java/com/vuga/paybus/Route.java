@@ -6,22 +6,26 @@ package com.vuga.paybus;
 public class Route
 {
     private String stop;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    private int id;
-
+    private String id;
     private String distance;
     private String start;
     private String seat;
+    private String start_time;
+    private String end_time;
+    private String name;
+    private String cost;
+    private String bus;
 
+    private String company;
+    private String max_passengers;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getStart_time() {
         return start_time;
     }
@@ -38,11 +42,31 @@ public class Route
         this.end_time = end_time;
     }
 
-    private String start_time;
-    private String end_time;
-    private String name;
 
-    private String cost;
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getBus() {
+        return bus;
+    }
+
+    public void setBus(String bus) {
+        this.bus = bus;
+    }
+
+    public String getMax_passengers() {
+        return max_passengers;
+    }
+
+    public void setMax_passengers(String max_passengers) {
+        this.max_passengers = max_passengers;
+    }
+
 
     public String getStop ()
     {

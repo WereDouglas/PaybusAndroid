@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         contactText = (TextView) findViewById(R.id.contact);
         passwordText = (TextView) findViewById(R.id.password);
-
+        PaymentHandler databaseHelper = new PaymentHandler (LoginActivity.this);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 
         cd = new ConnectionDetector(getApplicationContext());

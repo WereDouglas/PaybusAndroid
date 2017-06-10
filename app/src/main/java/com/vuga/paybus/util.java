@@ -7,8 +7,8 @@ import java.net.InetAddress;
  */
 public class util {
 
-   // public static String Url = "http://192.168.1.196/paybus/index.php/";
-   // public  static  String FileUrl = "http://192.168.1.196/paybus/";
+  //  public static String Url = "http://192.168.1.196/paybus/index.php/";
+  //  public  static  String FileUrl = "http://192.168.1.196/paybus/";
 
     public static String Url = "http://paybus.ugabus.com/index.php/";
     public static String FileUrl = "http://paybus.ugabus.com/";

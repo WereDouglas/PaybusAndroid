@@ -98,10 +98,10 @@ public class ExpenseHandler extends SQLiteOpenHelper {
         // return expense list
         return expenseList;
     }
-    public ArrayList<Expense> getWhere(String sessionID) {
+    public ArrayList<Expense> getWhere() {
         ArrayList<Expense> expenseList = new ArrayList<Expense>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE + " WHERE "+ KEY_SESSION_ID +" = '"+sessionID+"'";
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE + "";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -120,17 +120,17 @@ public class ExpenseHandler extends SQLiteOpenHelper {
         // return payment list
         return expenseList;
     }
-    public String updateSync(String sessionID,String particular) {
+    public String updateSync(String particular) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.execSQL("UPDATE expense SET sync='t' WHERE particular='"+particular+"' AND sessionID = '"+sessionID+"' ");
+        db.execSQL("UPDATE expense SET sync='t' WHERE particular='"+particular+"' ");
 
         return "Updated";
     }
-    public ArrayList<Expense> Sync(String sessionID) {
+    public ArrayList<Expense> Sync() {
         ArrayList<Expense> expenseList = new ArrayList<Expense>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE + " WHERE "+ KEY_SYNC +" = 'f' AND sessionID ='"+sessionID+"'";
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE + " WHERE "+ KEY_SYNC +" = 'f'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -177,8 +177,11 @@ public class ExpenseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(expense.getSessionID()) });
         db.close();
     }
+    public void delete() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("delete from " + TABLE_EXPENSE);
 
-
+    }
     // Getting expenses Count
     public int getexpensesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_EXPENSE;

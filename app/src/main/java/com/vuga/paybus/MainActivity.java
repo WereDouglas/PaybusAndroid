@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
         // Locate the Route Class
         final PaymentHandler databaseHelper = new PaymentHandler(MainActivity.this);
         paymentList = new ArrayList<Payment>();
-        paymentList = databaseHelper.Sync(util.SESSION_ID.toString());
+        paymentList = databaseHelper.Sync();
         for (int x = 0; x < paymentList.size(); x++) {
             System.out.println("EMAIL " + paymentList.get(x).getEmail());
             System.out.println("ROUTE " + util.SESSION_ROUTE);
@@ -302,14 +302,16 @@ public class MainActivity extends AppCompatActivity {
             parama.put("name", paymentList.get(x).getEmail().toString());
             parama.put("seat", paymentList.get(x).getSeat().toString());
             parama.put("contact", paymentList.get(x).getContact().toString());
-            parama.put("routeID", util.SESSION_ROUTE);
-            parama.put("bus", util.SESSION_BUS);
+          //  parama.put("routeID", paymentList.get(x).getRoute().toString());
+            parama.put("routeID","route");
+           // parama.put("bus", paymentList.get(x).getBus().toString());
+            parama.put("bus", "GH123J");
             parama.put("date", paymentList.get(x).getDate().toString());
             parama.put("device", "true");
             parama.put("barcode", paymentList.get(x).getBarcode());
             parama.put("luggage", paymentList.get(x).getLuggage());
             parama.put("companyID", util.COMPANY_ID.toString());
-            parama.put("sessionID", util.SESSION_ID.toString());
+            parama.put("sessionID", "not applicable");
             parama.put("userID", util.USER_ID.toString());
             client.post(util.Url + "payment/create", parama, new AsyncHttpResponseHandler() {
                 @Override

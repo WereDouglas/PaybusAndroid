@@ -51,6 +51,7 @@
                 <Button android:id="@+id/datepicker"
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
+                    android:textColor="@color/background"
                     android:drawableRight="@drawable/calendar"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -61,7 +62,10 @@
 
                 android:textSize="20dp"
                 android:layout_height="wrap_content"
-                android:text="Date"/>
+                android:text="Date"
+                android:backgroundTintMode="src_in"
+                android:gravity="center|end"
+                android:textColor="#7fc668" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
@@ -78,10 +82,10 @@
                 android:layout_height="wrap_content"
                 />
             <TextView
-
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Transport cost:" />
+                android:text="Transport cost:"
+                android:textSize="20dp" />
             <EditText
                 android:id="@+id/cost"
                 android:layout_height="@dimen/txt_height"
@@ -94,10 +98,25 @@
                 android:background="@drawable/btn_circle"
                 />
             <TextView
+                android:id="@+id/bus"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Bus"
+                android:gravity="end"
+                android:textColor="#e17272" />
+            <TextView
+                android:id="@+id/routeID"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="routeID"
+                android:gravity="end"
+                android:textColor="#6ea6df" />
+            <TextView
 
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Luggage cost:" />
+                android:text="Luggage cost:"
+                android:textSize="20dp" />
             <EditText
                 android:id="@+id/luggage"
                 android:layout_height="@dimen/txt_height"

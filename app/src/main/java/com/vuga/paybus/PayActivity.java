@@ -59,13 +59,15 @@ import java.util.Set;
 import java.util.UUID;
 
 public class PayActivity extends AppCompatActivity {
-    private TextView mDateDisplay, txtcost, txttotal, txtstop, txtID, txtname, txtcontact, t, txtstatus, txtNo, txtlagguage;
+    private TextView mDateDisplay, txtbus, txtID, txtname, txtcontact, t, txtstatus, txtNo;
+    private  EditText txtcost, txttotal,txtlagguage;
     private Button mPickDate, btnSubmit;
     private ImageView bar, logo;
     private int mYear;
     private int mMonth;
     private int mDay;
-    String barcode, seatNo;
+   private Spinner myRoute ;
+            String barcode, seatNo;
     private String thisday;
     static final int DATE_DIALOG_ID = 0;
     JSONObject jsonobject;
@@ -110,12 +112,13 @@ public class PayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
         cd = new ConnectionDetector(PayActivity.this);
-        txtcost = (TextView) findViewById(R.id.cost);
-        txttotal = (TextView) findViewById(R.id.total);
+        txtcost = (EditText) findViewById(R.id.cost);
+        txttotal = (EditText) findViewById(R.id.total);
         txtstatus = (TextView) findViewById(R.id.status);
-
+        txtbus = (TextView) findViewById(R.id.bus);
+        txtID = (TextView) findViewById(R.id.routeID);
         txtNo = (TextView) findViewById(R.id.seatNo);
-        txtlagguage = (TextView) findViewById(R.id.luggage);
+        txtlagguage = (EditText) findViewById(R.id.luggage);
         txtlagguage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -133,7 +136,7 @@ public class PayActivity extends AppCompatActivity {
             Toast.makeText(PayActivity.this, "No Route list !", Toast.LENGTH_LONG).show();
         }
         /***ROUTE MANAGEMENT**/
-        Spinner myRoute = (Spinner) findViewById(R.id.input_route);
+        myRoute = (Spinner) findViewById(R.id.input_route);
         // Spinner adapter
         myRoute.setAdapter(new ArrayAdapter<String>(PayActivity.this,
                 android.R.layout.simple_spinner_dropdown_item, routeList));
@@ -143,9 +146,9 @@ public class PayActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
                 txtcost.setText(route.get(position).getCost());
-                //  txtID.setText(route.get(position).getId());
+                txtbus.setText(route.get(position).getBus());
+                txtID.setText(route.get(position).getId());
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
                 // TODO Auto-generated method stub
@@ -173,8 +176,6 @@ public class PayActivity extends AppCompatActivity {
         Button openButton = (Button) findViewById(R.id.open);
         Button closeButton = (Button) findViewById(R.id.close);
         myLabel = (TextView) findViewById(R.id.label);
-
-
         mDateDisplay = (TextView) findViewById(R.id.date);
         mPickDate = (Button) findViewById(R.id.datepicker);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
@@ -202,22 +203,6 @@ public class PayActivity extends AppCompatActivity {
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                try {
-                    if (Integer.parseInt(txtNo.getText().toString()) > Integer.parseInt(util.MAX_SEATS)) {
-                        txtNo.setError("Invalid seat number ,Value greater than allocated seat count ");
-                        txtNo.requestFocus();
-                        return;
-                    }
-                } catch (Exception p) {
-                    txtNo.setError("Invalid seat number ,Value greater than allocated seat count ");
-                    txtNo.requestFocus();
-                    return;
-                }
-                if (exist(list, txtNo.getText().toString())) {
-                    txtNo.setError(" SEAT OCCUPIED ");
-                    txtNo.requestFocus();
-                    return;
-                } else {
 
                     if (Save()) {
                         try {
@@ -229,17 +214,15 @@ public class PayActivity extends AppCompatActivity {
                             sendData();
                         } catch (IOException ex) {
                         }
-                        Intent startLocation = new Intent(PayActivity.this, MainActivity.class);
+                        Intent startLocation = new Intent(PayActivity.this,StartActivity.class);
                         startActivity(startLocation);
                         finish();
                     }
                        /* Log.d("INTERNET",util.isInternetAvailable()+"" );
                         Register();
                         */
-
-
-                }
             }
+
         });
 
         openButton.setOnClickListener(new View.OnClickListener() {
@@ -288,7 +271,7 @@ public class PayActivity extends AppCompatActivity {
         //    new DownloadJSON().execute();
         txtcost.setText(util.SESSION_COST);
         list = new ArrayList<String>();
-        Status();
+      //  Status();
 
     }
 
@@ -313,6 +296,8 @@ public class PayActivity extends AppCompatActivity {
                 // String[] endArray = jsonObject.optString("end").toString().split("T");
                 v.setStart_time(jsonObject.optString("start").toString());
                 v.setEnd_time(jsonObject.optString("end").toString());
+                v.setId(jsonObject.optString("id").toString());
+                v.setBus(jsonObject.optString("bus").toString());
                 route.add(v);
                 routeList.add(jsonObject.optString("name") + "");
                 //   Toast.makeText(NewActivity.this, "Looping "+ jsonObject.optString("noPlate"), Toast.LENGTH_LONG).show();
@@ -355,7 +340,7 @@ public class PayActivity extends AppCompatActivity {
 
         PaymentHandler databaseHelper = new PaymentHandler(PayActivity.this);
         paymentList = new ArrayList<Payment>();
-        paymentList = databaseHelper.getWhere(util.SESSION_ID);
+        paymentList = databaseHelper.getWhere();
         String values = "";
         int occupied = paymentList.size();
         int balance = Integer.parseInt(util.MAX_SEATS) - occupied;
@@ -433,7 +418,7 @@ public class PayActivity extends AppCompatActivity {
                     route.setSeat(jsonobject.optString("seat"));
                     route.setStart_time(jsonobject.optString("start_time"));
                     route.setEnd_time(jsonobject.optString("end_time"));
-                    route.setId(jsonobject.optInt("id"));
+                    route.setId(jsonobject.optString("id"));
                     world.add(route);
                     // Populate spinner with country names
                     worldlist.add(jsonobject.optString("name") + " TIME:" + jsonobject.optString("start_time"));
@@ -456,96 +441,13 @@ public class PayActivity extends AppCompatActivity {
     }
 
     private boolean Save() {
-        PaymentHandler db = new PaymentHandler(this);
-        db.addPayment(new Payment(barcode, mDateDisplay.getText().toString(), txtcontact.getText().toString(), txtcost.getText().toString(), thisday.toString(), txtNo.getText().toString(), txtcontact.getText().toString(), txtname.getText().toString(), "f", util.SESSION_ID, txtlagguage.getText().toString()));
 
+        PaymentHandler db = new PaymentHandler(this);
+        db.addPayment(new Payment(barcode,mDateDisplay.getText().toString(), txtcontact.getText().toString(), txtcost.getText().toString(), thisday.toString(), txtNo.getText().toString(), txtname.getText().toString(), "f", util.SESSION_ID, txtlagguage.getText().toString(), txtID.getText().toString(), txtbus.getText().toString(), myRoute.getSelectedItem().toString() ));
+        Toast.makeText(PayActivity.this, "Saved !" +  myRoute.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
         return true;
     }
 
-    private boolean Register() {
-
-        btnSubmit.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(PayActivity.this,
-                R.style.AppTheme);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Submitting information...");
-        progressDialog.show();
-        btnSubmit.setVisibility(View.GONE);
-
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        // IMEI = telephonyManager.getDeviceId();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-
-        params.put("cost", txtcost.getText().toString());
-        params.put("name", txtname.getText().toString());
-        params.put("seat", txtNo.getText().toString());
-        params.put("contact", txtcontact.getText().toString());
-        params.put("routeID", txtID.getText());
-        params.put("date", mDateDisplay.getText());
-        params.put("device", "true");
-        params.put("barcode", barcode);
-        params.put("companyID", util.COMPANY_ID);
-        client.post(util.Url + "payment/create", params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String ret = new String(responseBody);
-                try {
-
-                    JSONObject j = new JSONObject(ret);
-                    if (j.get("status").toString().equals("true")) {
-                        Toast.makeText(getApplicationContext(), " " + j.get("info").toString(), Toast.LENGTH_LONG).show();
-                        try {
-                            Intent startLocation = new Intent(PayActivity.this, MainActivity.class);
-                            startActivity(startLocation);
-                            finish();
-
-                        } catch (Exception e) {
-                            Toast.makeText(getApplicationContext(), "" + e, Toast.LENGTH_LONG).show();
-                            btnSubmit.setVisibility(View.VISIBLE);
-                            progressDialog.cancel();
-                        }
-                    } else {
-
-                        Toast.makeText(getApplicationContext(), " " + j.get("info").toString() + "", Toast.LENGTH_LONG).show();
-                        btnSubmit.setVisibility(View.VISIBLE);
-                        btnSubmit.setEnabled(true);
-                        progressDialog.cancel();
-                    }
-                    //  Toast.makeText(getApplicationContext(), "registration successful", Toast.LENGTH_LONG).show();
-
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-
-                    System.out.print("data sync Error" + e);
-
-                    System.out.print(ret);
-                    e.printStackTrace();
-                    progressDialog.cancel();
-                    btnSubmit.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                if (statusCode == 404) {
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                    btnSubmit.setVisibility(View.VISIBLE);
-                    btnSubmit.setEnabled(true);
-                } else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                    btnSubmit.setVisibility(View.VISIBLE);
-                    btnSubmit.setEnabled(true);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error:" + statusCode + error.getMessage(), Toast.LENGTH_LONG).show();
-                    btnSubmit.setVisibility(View.VISIBLE);
-                    btnSubmit.setEnabled(true);
-                }
-            }
-        });
-        return canEnter;
-    }
 
     // This will find a bluetooth printer device
     void findBT() {
@@ -681,30 +583,31 @@ public class PayActivity extends AppCompatActivity {
             printPhotoLogo();
 
             printPhoto();
-            printText(barcode);
-            printNewLine();
+            String initial=util.COMPANY.substring(0, Math.min(util.COMPANY.length(), 3)) +"-"+ mDateDisplay.getText() +"-" + txtNo.getText();
 
+            printText(initial);
             printNewLine();
-            resetPrint();
+            printNewLine();
+           // resetPrint();
             msg += "TEL:" + txtcontact.getText().toString() + "\n";
             msg += "NAME:" + txtname.getText().toString() + "\n";
-            msg += "BUS :" + util.SESSION_BUS + "\n";
-            msg += "TO: " + util.SESSION_ROUTE + " " + "\n";
-            msg += util.SESSION_TIME + "\n";
+            msg += "BUS :" + txtbus.getText() + "\n";
+            msg += "TO: " +  myRoute.getSelectedItem().toString()+ " " + "\n";
             msg += "COST: " + txtcost.getText() + "\n";
             msg += "LUGGAGE COST: " + txtlagguage.getText() + "\n";
             msg += "TOTAL COST: " + txttotal.getText() + "\n";
             msg += "DATE:" + mDateDisplay.getText().toString() + " SEAT No:" + txtNo.getText() + "\n";
             msg += "-----------------------" + "\n";
             msg += "T.ID:" + barcode + " " + "\n";
-            msg += "------------------------" + "\n";
-            msg += "NO REFUND" + "\n";
-            msg += "------------------------" + "\n";
+
+            msg += "" + "\n";
             msg += "SERVED BY : " + util.USER_NAME + "\n";
             msg += " " + currentDateandTime + " " + "\n";
             msg += "POWERED BY PAYBUS" + "\n";
-            msg += "" + "\n";
-            msg += "" + "\n";
+            msg += "TERMS AND CONDITIONS APPLY" + "\n";
+            msg += "------------------------" + "\n";
+            msg += "NO REFUND" + "\n";
+            msg += "------------------------" + "\n";
             msg += "" + "\n";
             msg += "" + "\n";
             mmOutputStream.write(msg.getBytes());

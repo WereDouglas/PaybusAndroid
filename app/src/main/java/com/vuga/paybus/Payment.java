@@ -6,8 +6,8 @@ package com.vuga.paybus;
 public class Payment {
 
     private String bus;
-
     private String busID;
+    private String route;
     private String barcode;
     private String routeID;
     private String date;
@@ -20,30 +20,12 @@ public class Payment {
     private String email;
     private String name;
     private String sync;
-
-    public String getLuggage() {
-        return luggage;
-    }
-
-    public void setLuggage(String luggage) {
-        this.luggage = luggage;
-    }
-
     private String luggage;
-
-    public String getSessionID() {
-        return sessionID;
-    }
-
-    public void setSessionID(String sessionID) {
-        this.sessionID = sessionID;
-    }
-
     private String sessionID;
     private String companyID;
     public  Payment(){}
 
-    public  Payment(String barcode,String date, String contact, String cost , String created, String seat, String email,  String name,String sync,String sessionID,String luggage){
+    public  Payment(String barcode,String date, String contact, String cost , String created, String seat, String name,String sync,String sessionID,String luggage,String routeID,String bus,String route){
 
         this.busID= busID;
         this.barcode = barcode;
@@ -61,6 +43,30 @@ public class Payment {
         this.sync = sync;
         this.luggage = luggage;
         this.companyID = companyID;
+        this.bus = bus;
+        this.route = route;
+    }
+    public String getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
+    }
+
+    public String getLuggage() {
+        return luggage;
+    }
+
+    public void setLuggage(String luggage) {
+        this.luggage = luggage;
     }
     public String getSync() {
         return sync;
@@ -69,7 +75,6 @@ public class Payment {
     public void setSync(String sync) {
         this.sync = sync;
     }
-
 
     public String getBus ()
     {

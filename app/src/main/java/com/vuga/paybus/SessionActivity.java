@@ -24,7 +24,7 @@ public class SessionActivity extends Activity {
         gridView = (GridView) findViewById(R.id.gv_emp);
         PaymentHandler databaseHelper = new PaymentHandler (SessionActivity.this);
         paymentList = new ArrayList<Payment>();
-        paymentList = databaseHelper.getWhere(util.SESSION_ID);
+        paymentList = databaseHelper.getWhere();
        // paymentList = databaseHelper.getAllPayments();
         adapter = new PaymentAdapter(SessionActivity.this, paymentList);
         gridView.setAdapter(adapter);
